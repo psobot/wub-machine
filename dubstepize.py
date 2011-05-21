@@ -17,6 +17,8 @@ from echonest import modify
 from echonest.selection import *
 from echonest.sorting import *
 
+from random import choice
+
 from pprint import pprint
 
 usage="""
@@ -30,39 +32,69 @@ Drum instenity defaults to 0.5
 """
 
 keys = {0: "C", 1: "C#", 2: "D", 3: "Eb", 4: "E", 5:"F", 6:"F#", 7:"G", 8:"G#", 9:"A", 10:"Bb", 11:"B"}
+wubs = [audio.AudioData('wubs/c.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('wubs/c-sharp.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('wubs/d.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('wubs/d-sharp.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('wubs/e.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('wubs/f.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('wubs/f-sharp.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('wubs/g.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('wubs/g-sharp.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('wubs/a.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('wubs/a-sharp.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('wubs/b.wav',       sampleRate=44100, numChannels=2)
+       ]
+
+wub_breaks = [audio.AudioData('break-ends/c.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('break-ends/c-sharp.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('break-ends/d.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('break-ends/d-sharp.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('break-ends/e.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('break-ends/f.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('break-ends/f-sharp.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('break-ends/g.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('break-ends/g-sharp.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('break-ends/a.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('break-ends/a-sharp.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('break-ends/b.wav',       sampleRate=44100, numChannels=2)
+       ]
+
 scale = []
 
-def main(input_filename, output_filename):
+def mono_to_stereo(audio_data):
+    data = audio_data.data.flatten().tolist()
+    new_data = numpy.array((data,data))
+    audio_data.data = new_data.swapaxes(0,1)
+    audio_data.numChannels = 2
+    return audio_data
+
+def samples_of_key(key):
+    while not len(samples[key]):
+        key = (key + 7) % 12
+    return samples[key]
+
+samples = {}
+def main(input_filename, output_filename, forced_key):
+    
     st = modify.Modify()
-    audiofile = audio.LocalAudioFile(input_filename)
-    tonic = audiofile.analysis.key['value']
-    tempo = audiofile.analysis.tempo['value']
+    nonwub = audio.LocalAudioFile(input_filename)
+    if not forced_key:
+        tonic = nonwub.analysis.key['value']
+    else:
+        tonic = forced_key
+    tempo = nonwub.analysis.tempo['value']
 
-    pprint(tempo);
+    fade_in = nonwub.analysis.end_of_fade_in
+    fade_out = nonwub.analysis.start_of_fade_out
 
+    bars = nonwub.analysis.bars#.that(are_contained_by_range(fade_in, fade_out))
+    beats = nonwub.analysis.beats#.that(are_contained_by_range(fade_in, fade_out))	
 
-    print "The tonic of this song is %s." % keys[tonic]
+    for pitch in range(0, 12):
+        samples[pitch] = bars.that(overlap_ends_of(nonwub.analysis.segments.that(have_pitch_max(pitch)).that(overlap_starts_of(beats))))
 
-    acceptable_sample_pitches = [tonic, (tonic + 5) % 12, (tonic + 7) % 12]
-    print "Acceptable pitches of samples that will be used: %s, %s and %s." % (keys[acceptable_sample_pitches[0]], keys[acceptable_sample_pitches[1]], keys[acceptable_sample_pitches[2]])
-
-   # fade_in = audiofile.analysis.end_of_fade_in
-   # fade_out = audiofile.analysis.start_of_fade_out
-
-    bars = audiofile.analysis.bars#.that(are_contained_by_range(fade_in, fade_out))
-    beats = audiofile.analysis.beats#.that(are_contained_by_range(fade_in, fade_out))	
-
-    samples = {}
-    for pitch in acceptable_sample_pitches:
-        samples[pitch] = beats.that(overlap_ends_of(audiofile.analysis.segments.that(have_pitch_max(pitch)).that(overlap_starts_of(beats))))
-
-#    i=0
-#    for pitch, pitchsamples in samples.iteritems():
-#        for s in pitchsamples:
-#        #    s.encode("%s_%s_%s.mp3" % (output_filename, keys[pitch], i))
-#            i += 1
-
-    audioout = audio.AudioData(shape= (len(audiofile)+100000,2), sampleRate=44100, numChannels=2)
+    audioout = audio.AudioData(shape= (len(nonwub),2), sampleRate=44100, numChannels=2)
     out = audio.AudioQuantumList()
 
     """
@@ -82,15 +114,17 @@ def main(input_filename, output_filename):
     """
 
 
-#    for i, s in enumerate(audiofile.analysis.bars):
-#        audio.getpieces(audiofile, [s]).encode("bar_%s_%s" % (i, output_filename))
+#    for i, s in enumerate(nonwub.analysis.bars):
+#        audio.getpieces(nonwub, [s]).encode("bar_%s_%s" % (i, output_filename))
 
     low        = audio.AudioData('samples/sub_long01.wav', sampleRate=44100, numChannels=2)
+    fizzle     = audio.AudioData('fizzle.wav', sampleRate=44100, numChannels=2)
+    introeight = audio.AudioData('intro-eight.wav', sampleRate=44100, numChannels=2)
+    hats       = audio.AudioData('hats.wav', sampleRate=44100, numChannels=2)
 
     custom_bars = []
-    audioout.append(audio.mix(audiofile.__getitem__(beats[0]), low))
 
-    custom_bars.append(beats[1:3])
+    custom_bars.append(beats[0:4])
     custom_bars.append(beats[4:8])
     custom_bars.append(beats[8:12])
     custom_bars.append(beats[12:16])    
@@ -107,7 +141,6 @@ def main(input_filename, output_filename):
     out.append(custom_bars[1][0])
     out.append(custom_bars[1][0])
 
-
     beatone = custom_bars[2][0]
     beattwo = custom_bars[3][0]
     beatthree = custom_bars[3][2]
@@ -119,16 +152,45 @@ def main(input_filename, output_filename):
     for x in range(0, 8):
         out.append(audio.AudioQuantum(beatthree.start, beatthree.duration/4, None, beatthree.confidence, beatthree.source))
     
-    audioout.append(audio.getpieces(audiofile, out))
+    nonwub_intro = mono_to_stereo(st.shiftTempo(audio.getpieces(nonwub, out), 140/tempo))
+    nonwub_intro = audio.mix(nonwub_intro, low, 0.7)
+    nonwub_intro = audio.mix(nonwub_intro, introeight, 0.7)
 
-    st.shiftTempo(audioout, 140/tempo).encode("%s.mp3" % output_filename)
+    audioout.append(nonwub_intro)
+ 
+######
+#   BEGIN WUBWUB
+######
+#   Each "wub" comprises of 8 bars = 32 beats
+#   of which, the default song format is:
+#       1 1 1 1 1 1 1 1     =   8 wubs in tonic
+#       4 4 4 4             =   4 wubs in the minor third from the tonic
+#       10 10 10 10         =   4 wubs in the minor 7th from the tonic
+######
+
+    for bars in range(0, 8):
+        onebar = audio.AudioQuantumList()
+        for i in range(0, 4):
+            onebar.append( choice( samples_of_key(tonic) ) )
+        for i in range(0, 2):
+            onebar.append( choice( samples_of_key((tonic + 3) % 12) ) )
+        for i in range(0, 2):
+            onebar.append( choice( samples_of_key((tonic + 9) % 12) ) )
+        audioout.append( audio.mix( audio.mix( wubs[tonic], fizzle ), mono_to_stereo( st.shiftTempo( audio.getpieces(nonwub, onebar), 140/tempo ) ), 0.35 ) )
+        audioout.append( audio.mix( audio.mix( wub_breaks[tonic], hats ), mono_to_stereo( st.shiftTempo( audio.getpieces(nonwub, onebar), 140/tempo ) ), 0.35 ) )
+    audioout.encode(output_filename)
+
 
 if __name__=='__main__':
     try:
         input_filename = sys.argv[1]
         output_filename = sys.argv[2]
+        if len(sys.argv) > 3:
+            forced_key = int(sys.argv[3])
+        else:
+            forced_key = None
     except:
         print usage
         sys.exit(-1)
-    main(input_filename, output_filename)
+    main(input_filename, output_filename, forced_key)
 
