@@ -69,10 +69,27 @@ def mono_to_stereo(audio_data):
     audio_data.numChannels = 2
     return audio_data
 
-def samples_of_key(key):
-    while not len(samples[key]):
-        key = (key + 7) % 12
-    return samples[key]
+def samples_of_key(section, key):
+    tries = 0
+    while not len(samples[section][key]) and tries < 24:
+        if tries < 12:
+            key = (key + 7) % 12
+        else:
+            key = tries % 12
+        tries = tries + 1
+   
+    while not len(samples[section][key]):    #find-some-samples mode
+        section = (section + 1) % len(samples)
+        key = (key + 2) % 12
+
+    return samples[section][key]
+
+def loudness(beat):
+    data = beat.render()
+    if data.numChannels == 2:
+        return float( max( [ abs(x) for x, y in data.data ] ) ) / 32768
+    else:
+        return float( max( [ abs(x) for x in data.data ] ) ) / 32768
 
 samples = {}
 def main(input_filename, output_filename, forced_key):
@@ -89,10 +106,14 @@ def main(input_filename, output_filename, forced_key):
     fade_out = nonwub.analysis.start_of_fade_out
 
     bars = nonwub.analysis.bars#.that(are_contained_by_range(fade_in, fade_out))
-    beats = nonwub.analysis.beats#.that(are_contained_by_range(fade_in, fade_out))	
+    beats = nonwub.analysis.beats#.that(are_contained_by_range(fade_in, fade_out))  
+    sections = nonwub.analysis.sections
 
-    for pitch in range(0, 12):
-        samples[pitch] = bars.that(overlap_ends_of(nonwub.analysis.segments.that(have_pitch_max(pitch)).that(overlap_starts_of(beats))))
+    for i, v in enumerate(sections):
+        samples[i] = {}
+        for pitch in range(0, 12):
+            thesebeats = v.children()
+            samples[i][pitch] = thesebeats.that(overlap_ends_of(nonwub.analysis.segments.that(have_pitch_max(pitch)).that(overlap_starts_of(thesebeats))))
 
     audioout = audio.AudioData(shape= (len(nonwub),2), sampleRate=44100, numChannels=2)
     out = audio.AudioQuantumList()
@@ -121,6 +142,7 @@ def main(input_filename, output_filename, forced_key):
     fizzle     = audio.AudioData('fizzle.wav', sampleRate=44100, numChannels=2)
     introeight = audio.AudioData('intro-eight.wav', sampleRate=44100, numChannels=2)
     hats       = audio.AudioData('hats.wav', sampleRate=44100, numChannels=2)
+    blank      = audio.AudioData('empty.wav', sampleRate=44100, numChannels=2)
 
     custom_bars = []
 
@@ -168,16 +190,49 @@ def main(input_filename, output_filename, forced_key):
 #       10 10 10 10         =   4 wubs in the minor 7th from the tonic
 ######
 
-    for bars in range(0, 8):
+    for section, value in enumerate(sections):
         onebar = audio.AudioQuantumList()
         for i in range(0, 4):
-            onebar.append( choice( samples_of_key(tonic) ) )
+            beat = choice( samples_of_key(section, tonic) )
+            if i % 2:
+                onebar.append( audio.AudioQuantum( beat.start, beat.duration, None, beat.confidence, blank ) )
+            else:
+                onebar.append( beat )
         for i in range(0, 2):
-            onebar.append( choice( samples_of_key((tonic + 3) % 12) ) )
+            beat = choice( samples_of_key(section, (tonic + 3) % 12) )
+            if i % 2:
+                onebar.append( audio.AudioQuantum( beat.start, beat.duration, None, beat.confidence, blank ) )
+            else:
+                onebar.append( beat )
         for i in range(0, 2):
-            onebar.append( choice( samples_of_key((tonic + 9) % 12) ) )
-        audioout.append( audio.mix( audio.mix( wubs[tonic], fizzle ), mono_to_stereo( st.shiftTempo( audio.getpieces(nonwub, onebar), 140/tempo ) ), 0.35 ) )
-        audioout.append( audio.mix( audio.mix( wub_breaks[tonic], hats ), mono_to_stereo( st.shiftTempo( audio.getpieces(nonwub, onebar), 140/tempo ) ), 0.35 ) )
+            beat = choice( samples_of_key(section, (tonic + 9) % 12) )
+            if i % 2:
+                onebar.append( audio.AudioQuantum( beat.start, beat.duration, None, beat.confidence, blank ) )
+            else:
+                onebar.append( beat )
+
+        orig_bar = mono_to_stereo( st.shiftTempo( audio.getpieces(nonwub, onebar), 140/tempo ) )
+
+        loud = loudness(orig_bar)
+        print "Loudness of section ", section, " is ", loud
+
+        #   target mix is 55% original, 45% wubs
+        #   if section is loudest (i.e.: clipping, 1.0) it is mixed at 55% original (mix factor is 0.45)
+        #   if section is quieter, it is mixed at 
+
+        basemix = 0.35
+
+        mixfactor = (-1 * basemix) + loud
+        if mixfactor < 0.2:
+            mixfactor = 0.2
+
+        print mixfactor
+
+        audioout.append( audio.mix( audio.mix( wubs[tonic], fizzle ), orig_bar , mixfactor ) )
+
+        audioout.append( audio.mix( audio.mix( wub_breaks[tonic], hats ), orig_bar , mixfactor ) )
+    
+    audioout.append( fizzle )
     audioout.encode(output_filename)
 
 
