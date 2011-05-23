@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 """
-drums.py
+dubstepize.py
 
-Add drums to a song.
+Turns a song into a dubstep remix.
 
-At the moment, only works with songs in 4, and endings are rough.
-
-By Ben Lacker, 2009-02-24.
+by Peter Sobot <hi@petersobot.com>, started Jan. 2011
+based off of code by Ben Lacker, 2009-02-24.
 """
 import numpy
 import sys
@@ -22,13 +21,6 @@ from random import choice
 from pprint import pprint
 
 usage="""
-Usage:
-    python drums.py <inputfilename> <breakfilename> <outputfilename> <beatsinbreak> <barsinbreak> [<drumintensity>]
-
-Example:
-    python drums.py HereComesTheSun.mp3 breaks/AmenBrother.mp3 HereComeTheDrums.mp3 64 4 0.6
-
-Drum instenity defaults to 0.5
 """
 
 keys = {0: "C", 1: "C#", 2: "D", 3: "Eb", 4: "E", 5:"F", 6:"F#", 7:"G", 8:"G#", 9:"A", 10:"Bb", 11:"B"}
@@ -149,11 +141,11 @@ def main(input_filename, output_filename, forced_key):
 #        audio.getpieces(nonwub, [s]).encode("bar_%s_%s" % (i, output_filename))
 
     low        = audio.AudioData('samples/sub_long01.wav', sampleRate=44100, numChannels=2)
-    fizzle     = audio.AudioData('fizzle.wav', sampleRate=44100, numChannels=2)
-    fizzle_soft= audio.AudioData('fizzle-soft.wav', sampleRate=44100, numChannels=2)
-    introeight = audio.AudioData('intro-eight.wav', sampleRate=44100, numChannels=2)
-    hats       = audio.AudioData('hats.wav', sampleRate=44100, numChannels=2)
-    blank      = audio.AudioData('empty.wav', sampleRate=44100, numChannels=2)
+    fizzle     = audio.AudioData('samples/fizzle.wav', sampleRate=44100, numChannels=2)
+    fizzle_soft= audio.AudioData('samples/fizzle-soft.wav', sampleRate=44100, numChannels=2)
+    introeight = audio.AudioData('samples/intro-eight.wav', sampleRate=44100, numChannels=2)
+    hats       = audio.AudioData('samples/hats.wav', sampleRate=44100, numChannels=2)
+    blank      = audio.AudioData('samples/empty.wav', sampleRate=44100, numChannels=2)
 
     custom_bars = []
 
