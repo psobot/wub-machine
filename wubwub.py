@@ -22,6 +22,7 @@ from random import choice
 from pprint import pprint
 
 usage="""
+    python dubstepize.py <inputfile> <outputfile> [<forced_key where 0 = C and 11 = B>]
 """
 
 keys = {0: "C", 1: "C#", 2: "D", 3: "Eb", 4: "E", 5:"F", 6:"F#", 7:"G", 8:"G#", 9:"A", 10:"Bb", 11:"B"}
@@ -62,9 +63,9 @@ def mono_to_stereo(audio_data):
     audio_data.numChannels = 2
     return audio_data
 
-def samples_of_key(section, key):
+def samples_of_key(section, key):   #HORRIBLY INEFFICIENT METHOD that should be fixed, eventually
     tries = 0
-    while not len(samples[section][key]) and tries < 24:
+    while not len(samples[section][key]) and tries < 13:
         if tries < 12:
             key = (key + 7) % 12
         else:
@@ -91,6 +92,8 @@ def main(input_filename, output_filename, forced_key):
 
     st = modify.Modify()
     nonwub = audio.LocalAudioFile(input_filename)
+    print "Audio file analyzed."
+
     if not forced_key:
         tonic = nonwub.analysis.key['value']
     else:
@@ -103,6 +106,8 @@ def main(input_filename, output_filename, forced_key):
     bars = nonwub.analysis.bars#.that(are_contained_by_range(fade_in, fade_out))
     beats = nonwub.analysis.beats#.that(are_contained_by_range(fade_in, fade_out))  
     sections = nonwub.analysis.sections
+    
+    print "Selecting samples..."
 
     for i, v in enumerate(sections):
         samples[i] = {}
@@ -141,12 +146,16 @@ def main(input_filename, output_filename, forced_key):
 #    for i, s in enumerate(nonwub.analysis.bars):
 #        audio.getpieces(nonwub, [s]).encode("bar_%s_%s" % (i, output_filename))
 
+    print "Grabbing wubwub samples..."
+
     low        = audio.AudioData('samples/sub_long01.wav', sampleRate=44100, numChannels=2)
     fizzle     = audio.AudioData('samples/fizzle.wav', sampleRate=44100, numChannels=2)
     fizzle_soft= audio.AudioData('samples/fizzle-soft.wav', sampleRate=44100, numChannels=2)
     introeight = audio.AudioData('samples/intro-eight.wav', sampleRate=44100, numChannels=2)
     hats       = audio.AudioData('samples/hats.wav', sampleRate=44100, numChannels=2)
     blank      = audio.AudioData('samples/empty.wav', sampleRate=44100, numChannels=2)
+
+    print "Compiling introduction..."
 
     custom_bars = []
 
@@ -183,6 +192,8 @@ def main(input_filename, output_filename, forced_key):
     nonwub_intro = audio.mix(nonwub_intro, introeight, 0.7)
 
     audioout.append(nonwub_intro)
+
+    print "Compiling bars..."
 ######
 #   BEGIN WUBWUB
 ######
@@ -194,6 +205,7 @@ def main(input_filename, output_filename, forced_key):
 ######
 
     for section, value in enumerate(sections):
+        print "\tCompiling bars for section", section+1 , "of", len(sections) , "..."
         onebar = audio.AudioQuantumList()
         if sampling_target == "tatums":
             for twice in range(0, 2):
@@ -241,10 +253,19 @@ def main(input_filename, output_filename, forced_key):
         audioout.append( audio.mix( audio.mix( wubs[tonic], fizzle ), orig_bar , mixfactor ) )
         audioout.append( audio.mix( audio.mix( wub_breaks[tonic], hats ), orig_bar , mixfactor ) )
     
+    print "Adding ending..."
+
     audioout.append( fizzle_soft )
+
+    print "Encoding output..."
+
     audioout.encode( output_filename )
 
+    print "Deleting temp file..."
+
     os.unlink(nonwub.convertedfile)
+
+    print "Done!"
 
 if __name__=='__main__':
     try:
