@@ -183,7 +183,6 @@ def main(input_filename, output_filename, forced_key):
     nonwub_intro = audio.mix(nonwub_intro, introeight, 0.7)
 
     audioout.append(nonwub_intro)
-    os.unlink(nonwub.convertedfile)
 ######
 #   BEGIN WUBWUB
 ######
@@ -245,6 +244,7 @@ def main(input_filename, output_filename, forced_key):
     audioout.append( fizzle_soft )
     audioout.encode( output_filename )
 
+    os.unlink(nonwub.convertedfile)
 
 if __name__=='__main__':
     try:
