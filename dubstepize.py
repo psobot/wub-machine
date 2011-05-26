@@ -10,6 +10,7 @@ based off of code by Ben Lacker, 2009-02-24.
 import numpy
 import sys
 import time
+import os
 
 import echonest.audio as audio
 from echonest import modify
@@ -182,7 +183,7 @@ def main(input_filename, output_filename, forced_key):
     nonwub_intro = audio.mix(nonwub_intro, introeight, 0.7)
 
     audioout.append(nonwub_intro)
- 
+	os.unlink(nonwub.convertedfile)
 ######
 #   BEGIN WUBWUB
 ######
