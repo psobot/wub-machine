@@ -183,7 +183,7 @@ def main(input_filename, output_filename, forced_key):
     nonwub_intro = audio.mix(nonwub_intro, introeight, 0.7)
 
     audioout.append(nonwub_intro)
-	os.unlink(nonwub.convertedfile)
+    os.unlink(nonwub.convertedfile)
 ######
 #   BEGIN WUBWUB
 ######
