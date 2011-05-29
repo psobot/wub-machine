@@ -161,10 +161,8 @@ def main(input_filename, output_filename, forced_key):
 
     print "Grabbing wubwub samples..."
 
-    low        = audio.AudioData('samples/sub_long01.wav', sampleRate=44100, numChannels=2)
     introeight = audio.AudioData('samples/intro-eight.wav', sampleRate=44100, numChannels=2)
     hats       = audio.AudioData('samples/hats.wav', sampleRate=44100, numChannels=2)
-    blank      = audio.AudioData('samples/empty.wav', sampleRate=44100, numChannels=2)
 
     print "Compiling introduction..."
 
