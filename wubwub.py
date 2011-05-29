@@ -197,7 +197,6 @@ def main(input_filename, output_filename, forced_key):
         out.append(audio.AudioQuantum(beatthree.start, beatthree.duration/4, None, beatthree.confidence, beatthree.source))
     
     nonwub_intro = mono_to_stereo(st.shiftTempo(audio.getpieces(nonwub, out), 140/tempo))
-    nonwub_intro = audio.mix(nonwub_intro, low, 0.7)
     nonwub_intro = audio.mix(nonwub_intro, introeight, 0.7)
 
     audioout.append(nonwub_intro)
@@ -216,38 +215,32 @@ def main(input_filename, output_filename, forced_key):
     for section, value in enumerate(sections):
         print "\tCompiling bars for section", section+1 , "of", len(sections) , "..."
         onebar = audio.AudioQuantumList()
+        s1 = samples_of_key(section, tonic)
+        s2 = samples_of_key(section, (tonic + 3) % 12)
+        s3 = samples_of_key(section, (tonic + 9) % 12)
         if sampling_target == "tatums":
             for twice in range(0, 2):
                 for i in range(0, 16):
-                    s = samples_of_key(section, tonic)
-                    onebar.append( s[i % len(s)] )
+                    onebar.append( s1[i % len(s1)] )
                 for i in range(16, 24):
-                    s = samples_of_key(section, (tonic + 3) % 12)
-                    onebar.append(  s[i % len(s)]  )
+                    onebar.append(  s2[i % len(s2)]  )
                 for i in range(24, 32):
-                    s = samples_of_key(section, (tonic + 9) % 12)
-                    onebar.append(  s[i % len(s)]  )
+                    onebar.append(  s3[i % len(s3)]  )
         elif sampling_target == "beats":
             for twice in range(0, 2):
                 for i in range(0, 8):
-                    s = samples_of_key(section, tonic)
-                    onebar.append( s[i % len(s)] )
+                    onebar.append( s1[i % len(s1)] )
                 for i in range(8, 12):
-                    s = samples_of_key(section, (tonic + 3) % 12)
-                    onebar.append(  s[i % len(s)]  )
+                    onebar.append(  s2[i % len(s2)]  )
                 for i in range(12, 16):
-                    s = samples_of_key(section, (tonic + 9) % 12)
-                    onebar.append(  s[i % len(s)]  )
+                    onebar.append(  s3[i % len(s3)]  )
         elif sampling_target == "bars":
             for i in range(0, 4):
-                s = samples_of_key(section, tonic)
-                onebar.append( s[i % len(s)] )
+                onebar.append( s1[i % len(s1)] )
             for i in range(4, 6):
-                s = samples_of_key(section, (tonic + 3) % 12)
-                onebar.append(  s[i % len(s)]  )
+                onebar.append(  s2[i % len(s2)]  )
             for i in range(6, 8):
-                s = samples_of_key(section, (tonic + 9) % 12)
-                onebar.append(  s[i % len(s)]  )
+                onebar.append(  s3[i % len(s3)]  )
 
         orig_bar = mono_to_stereo( st.shiftTempo( audio.getpieces(nonwub, onebar), 140/tempo ) )
 
