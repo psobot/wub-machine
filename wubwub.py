@@ -54,6 +54,19 @@ wub_breaks = [audio.AudioData('break-ends/c.wav',       sampleRate=44100, numCha
         audio.AudioData('break-ends/b.wav',       sampleRate=44100, numChannels=2)
        ]
 
+splashes = [audio.AudioData('splashes/splash_01.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('splashes/splash_02.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('splashes/splash_03.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('splashes/splash_04.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('splashes/splash_05.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('splashes/splash_06.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('splashes/splash_07.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('splashes/splash_08.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('splashes/splash_09.wav', sampleRate=44100, numChannels=2),
+        audio.AudioData('splashes/splash_10.wav',       sampleRate=44100, numChannels=2),
+        audio.AudioData('splashes/splash_11.wav', sampleRate=44100, numChannels=2),
+       ]
+
 scale = []
 
 def mono_to_stereo(audio_data):
@@ -149,8 +162,6 @@ def main(input_filename, output_filename, forced_key):
     print "Grabbing wubwub samples..."
 
     low        = audio.AudioData('samples/sub_long01.wav', sampleRate=44100, numChannels=2)
-    fizzle     = audio.AudioData('samples/fizzle.wav', sampleRate=44100, numChannels=2)
-    fizzle_soft= audio.AudioData('samples/fizzle-soft.wav', sampleRate=44100, numChannels=2)
     introeight = audio.AudioData('samples/intro-eight.wav', sampleRate=44100, numChannels=2)
     hats       = audio.AudioData('samples/hats.wav', sampleRate=44100, numChannels=2)
     blank      = audio.AudioData('samples/empty.wav', sampleRate=44100, numChannels=2)
@@ -250,12 +261,12 @@ def main(input_filename, output_filename, forced_key):
         if mixfactor < 0.3:
             mixfactor = 0.3
 
-        audioout.append( audio.mix( audio.mix( wubs[tonic], fizzle ), orig_bar , mixfactor ) )
+        audioout.append( audio.mix( audio.mix( wubs[tonic], choice(splashes) ), orig_bar , mixfactor ) )
         audioout.append( audio.mix( audio.mix( wub_breaks[tonic], hats ), orig_bar , mixfactor ) )
     
     print "Adding ending..."
 
-    audioout.append( fizzle_soft )
+    audioout.append( choice(splashes) )
 
     print "Encoding output..."
 
