@@ -1,8 +1,0 @@
-Wubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwubwub
-
-Usage:
-    python dubstep.py <filename.[mp3|m4a|wav|aif]>
-
-Almost all functions and classes are well-documented and self-explanatory.
-
-This, behind a Tornado web frontend, powers the.wubmachine.com.
