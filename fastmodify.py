@@ -7,12 +7,13 @@ Requires soundstretch command-line binary to be installed.
 Based on code by Ben Lacker on 2009-06-12.
 Modified by Peter Sobot for speed on 2011-08-12
 """
-
 from echonest.audio import *
 import uuid, os
 
 class FastModify():
     def processAudio( self, ad, arg, tempdir="temp/" ):
+        if not access( tempdir, W_OK ):
+            tempdir = './'
         u = str( uuid.uuid1() )
         ad.encode( '%s%s.wav' % ( tempdir, u ) )
         process = subprocess.Popen(   ['soundstretch', '%s%s.wav' % ( tempdir, u ), '%s%s.out.wav' % ( tempdir, u ), arg],
