@@ -13,7 +13,8 @@ Dependencies:
 by Peter Sobot <hi@petersobot.com>
     v1: started Jan. 2011
     v2: August 2011
-based off of code by Ben Lacker, 2009-02-24.
+
+originally based off of code by Ben Lacker, 2009-02-24.
 """
 
 from os import unlink

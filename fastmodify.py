@@ -7,6 +7,7 @@ Requires soundstretch command-line binary to be installed.
 Based on code by Ben Lacker on 2009-06-12.
 Modified by Peter Sobot for speed on 2011-08-12
 """
+
 from echonest.audio import *
 import uuid, os
 
