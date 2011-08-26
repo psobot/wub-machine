@@ -13,8 +13,7 @@ Dependencies:
 by Peter Sobot <hi@petersobot.com>
     v1: started Jan. 2011
     v2: August 2011
-
-originally based off of code by Ben Lacker, 2009-02-24.
+based off of code by Ben Lacker, 2009-02-24.
 """
 
 from os import unlink
@@ -87,10 +86,10 @@ class Dubstep( Remixer ):
                             'samples/dubstep/splash-ends/3.wav',
                             'samples/dubstep/splash-ends/4.wav'
                         ]
+        'mixpoint': 20,     # "db factor" of wubs - 0 is softest wubs, infinity is... probably extremely loud 
+        'target': "beats"
     }
-    target =    "beats"
     samples =   {}
-    mixpoint =  15 # "db factor" of wubs - 0 is soft, infinity is... untested 
     st = None
 
     def loudness( self, segments, bar ):
@@ -156,8 +155,8 @@ class Dubstep( Remixer ):
             Result can be fed into echonest.audio.mix() as the third parameter.
         """
         mixfactor = 0
-        a = (float(74)/float(3)) + self.mixpoint
-        b = (float(148)/float(3)) + self.mixpoint
+        a = (float(74)/float(3)) + self.template['mixpoint']
+        b = (float(148)/float(3)) + self.template['mixpoint']
         loud = self.loudness( self.original.analysis.segments, segment )
         if not loud:
             loud = self.original.analysis.loudness
@@ -267,13 +266,13 @@ class Dubstep( Remixer ):
         if not s2: s2 = biggest
         if not s3: s3 = biggest
 
-        if self.target == "tatums":
+        if self.template['target'] == "tatums":
             f = 4
             r = 2
-        elif self.target == "beats":
+        elif self.template['target'] == "beats":
             f = 2
             r = 2
-        elif self.target == "bars":
+        elif self.template['target'] == "bars":
             f = 1
             r = 1
         for k in xrange(0, r):

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 remixer.py
 
@@ -8,7 +9,6 @@ by Peter Sobot <hi@petersobot.com>
     v1: started Jan. 2011
     v2: August 2011
 """
-
 from numpy import array
 from os import rename, unlink, path, access, W_OK
 from threading import Thread

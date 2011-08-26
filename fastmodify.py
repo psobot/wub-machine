@@ -12,7 +12,7 @@ import uuid, os
 
 class FastModify():
     def processAudio( self, ad, arg, tempdir="temp/" ):
-        if not access( tempdir, W_OK ):
+        if not os.access( tempdir, os.W_OK ):
             tempdir = './'
         u = str( uuid.uuid1() )
         ad.encode( '%s%s.wav' % ( tempdir, u ) )
