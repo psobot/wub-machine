@@ -85,7 +85,7 @@ class Dubstep( Remixer ):
                             'samples/dubstep/splash-ends/2.wav',
                             'samples/dubstep/splash-ends/3.wav',
                             'samples/dubstep/splash-ends/4.wav'
-                        ]
+                        ],
         'mixpoint': 20,     # "db factor" of wubs - 0 is softest wubs, infinity is... probably extremely loud 
         'target': "beats"
     }
