@@ -11,6 +11,7 @@ import numpy
 import sys
 import time
 import os
+import math
 
 import echonest.audio as audio
 from echonest import modify
@@ -26,45 +27,44 @@ usage="""
 """
 
 keys = {0: "C", 1: "C#", 2: "D", 3: "Eb", 4: "E", 5:"F", 6:"F#", 7:"G", 8:"G#", 9:"A", 10:"Bb", 11:"B"}
-wubs = [audio.AudioData('wubs/c.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('wubs/c-sharp.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('wubs/d.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('wubs/d-sharp.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('wubs/e.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('wubs/f.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('wubs/f-sharp.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('wubs/g.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('wubs/g-sharp.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('wubs/a.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('wubs/a-sharp.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('wubs/b.wav',       sampleRate=44100, numChannels=2)
+wubs = ['wubs/c.wav',
+        'wubs/c-sharp.wav',
+        'wubs/d.wav',
+        'wubs/d-sharp.wav',
+        'wubs/e.wav',
+        'wubs/f.wav',
+        'wubs/f-sharp.wav',
+        'wubs/g.wav',
+        'wubs/g-sharp.wav',
+        'wubs/a.wav',
+        'wubs/a-sharp.wav',
+        'wubs/b.wav'
        ]
 
-wub_breaks = [audio.AudioData('break-ends/c.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('break-ends/c-sharp.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('break-ends/d.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('break-ends/d-sharp.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('break-ends/e.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('break-ends/f.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('break-ends/f-sharp.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('break-ends/g.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('break-ends/g-sharp.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('break-ends/a.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('break-ends/a-sharp.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('break-ends/b.wav',       sampleRate=44100, numChannels=2)
+wub_breaks = ['break-ends/c.wav',
+        'break-ends/c-sharp.wav',
+        'break-ends/d.wav',
+        'break-ends/d-sharp.wav',
+        'break-ends/e.wav',
+        'break-ends/f.wav',
+        'break-ends/f-sharp.wav',
+        'break-ends/g.wav',
+        'break-ends/g-sharp.wav',
+        'break-ends/a.wav',
+        'break-ends/a-sharp.wav',
+        'break-ends/b.wav'
        ]
-
-splashes = [audio.AudioData('splashes/splash_01.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('splashes/splash_02.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('splashes/splash_03.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('splashes/splash_04.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('splashes/splash_05.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('splashes/splash_06.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('splashes/splash_07.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('splashes/splash_08.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('splashes/splash_09.wav', sampleRate=44100, numChannels=2),
-        audio.AudioData('splashes/splash_10.wav',       sampleRate=44100, numChannels=2),
-        audio.AudioData('splashes/splash_11.wav', sampleRate=44100, numChannels=2),
+splashes = ['splashes/splash_03.wav',
+        'splashes/splash_04.wav',
+        'splashes/splash_02.wav',
+        'splashes/splash_01.wav',
+        'splashes/splash_05.wav',
+        'splashes/splash_07.wav',
+        'splashes/splash_06.wav',
+        'splashes/splash_08.wav',
+        'splashes/splash_10.wav',
+        'splashes/splash_09.wav',
+        'splashes/splash_11.wav'
        ]
 
 scale = []
@@ -79,6 +79,7 @@ def mono_to_stereo(audio_data):
 def samples_of_key(section, key):   #HORRIBLY INEFFICIENT METHOD that should be fixed, eventually
     tries = 0
     while not len(samples[section][key]) and tries < 13:
+        print "samples_of_key", section, key, tries
         if tries < 12:
             key = (key + 7) % 12
         else:
@@ -91,12 +92,13 @@ def samples_of_key(section, key):   #HORRIBLY INEFFICIENT METHOD that should be 
 
     return samples[section][key]
 
-def loudness(beat):
-    data = beat.render()
-    if data.numChannels == 2:
-        return float( max( [ abs(x) for x, y in data.data ] ) ) / 32768
+def loudness(segments, bar):
+    b = segments.that(overlap_range(bar[0].start, bar[len(bar)-1].end))
+    maximums = [x.loudness_max for x in b]
+    if len(maximums):   
+        return float(1 - pow(10, (max(maximums)/float(10))))
     else:
-        return float( max( [ abs(x) for x in data.data ] ) ) / 32768
+        return 1
 
 samples = {}
 def main(input_filename, output_filename, forced_key):
@@ -154,10 +156,6 @@ def main(input_filename, output_filename, forced_key):
             first sixteenth note of fourth bar      x 8
             third sixteenth note of fourth bar      x 8
     """
-
-
-#    for i, s in enumerate(nonwub.analysis.bars):
-#        audio.getpieces(nonwub, [s]).encode("bar_%s_%s" % (i, output_filename))
 
     print "Grabbing wubwub samples..."
 
@@ -244,20 +242,21 @@ def main(input_filename, output_filename, forced_key):
 
         orig_bar = mono_to_stereo( st.shiftTempo( audio.getpieces(nonwub, onebar), 140/tempo ) )
 
-        loud = loudness(orig_bar)
+        loud = loudness(nonwub.analysis.segments, onebar)
 
         basemix = 0.5      # 0 = full wub, 1 = full song
 
         mixfactor = (-1 * basemix) + loud
+        print mixfactor
         if mixfactor < 0.3:
             mixfactor = 0.3
 
-        audioout.append( audio.mix( audio.mix( wubs[tonic], choice(splashes) ), orig_bar , mixfactor ) )
-        audioout.append( audio.mix( audio.mix( wub_breaks[tonic], hats ), orig_bar , mixfactor ) )
+        audioout.append( audio.mix( audio.mix( audio.AudioData( wubs[tonic], sampleRate=44100, numChannels=2, verbose=False ), audio.AudioData( splashes[(section +1) % len(splashes)], sampleRate=44100, numChannels=2, verbose=False ) ), orig_bar , mixfactor ) )
+        audioout.append( audio.mix( audio.mix( audio.AudioData( wub_breaks[tonic], sampleRate=44100, numChannels=2, verbose=False ), hats ), orig_bar , mixfactor ) )
     
     print "Adding ending..."
 
-    audioout.append( choice(splashes) )
+    audioout.append( audio.AudioData( splashes[(section +1) % len(splashes)], sampleRate=44100, numChannels=2, verbose=False ) )
 
     print "Encoding output..."
 
@@ -273,12 +272,13 @@ if __name__=='__main__':
     try:
         input_filename = sys.argv[1]
         output_filename = sys.argv[2]
-        if len(sys.argv) > 3:
+        if len(sys.argv) == 3:
             forced_key = int(sys.argv[3])
         else:
             forced_key = None
     except:
-        print usage
-        sys.exit(-1)
+       input_filename = "aint.mp3"
+       output_filename = "aint_debug.mp3"
+       forced_key = None
     main(input_filename, output_filename, forced_key)
 
