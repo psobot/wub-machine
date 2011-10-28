@@ -224,7 +224,7 @@ class Remixer( Thread ):
             newdata.data[:dataB.endindex] += dataB.data[:] * (1 - float(mix))
         return newdata
 
-    def partialEncode( self, audiodata ):
+    def partialEncode( self, audiodata, unload=True ):
         """
             A neat alternative to AudioQuantumList.
             Instead of making a list, holding it in memory and encoding it all at once,
@@ -235,7 +235,7 @@ class Remixer( Thread ):
         """
         audiodata.encode( "%s%s%s.wav" % ( self.tempdir, self.uid, self.encoded ) )
         audiodata.verbose = False
-        audiodata.unload()
+        if unload: audiodata.unload()
         self.encoded += 1
 
     def mixwav( self, filename ):
