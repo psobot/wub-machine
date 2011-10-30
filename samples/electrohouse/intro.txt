@@ -1,0 +1,15 @@
+# This line is a comment. Any blank lines, lines with # or + characters will be ignored.
+# The below track is a remixer layout.
+# Every two spaces is interpeted as one sixteenth note.
+# The numbers at each beat are semitones from the root (or tonic)
+# A dash after a number indicates a tie, or a hold: i.e.: 1 - signifies the tonic, held for an eighth note.
+# Syntax must be exact.
+# Subsequent lines will be interpereted as more bars.
+
+1 e + a 2 e + a 3 e + a 4 e + a 1 e + a 2 e + a 3 e + a 4 e + a 1 e + a 2 e + a 3 e + a 4 e + a 1 e + a 2 e + a 3 e + a 4 e + a
+    0 - - - 0 -     0 - 3 - 5 -     0 -     0 -     10  7 7 5       0 -     0 -     0 - 3 - 5 -     0 - 4   0 - 5   10  7 7 5   
+    0 - 5 5 0 -     5 - 7 - 7 6     3       5       10  7 3 5       0 -     0 -     0 - 3 - 5 -     0 - 4   0 - 5   10  7 7 11  
+    0 2 3 4 5       0 - 3 - 5 - 10  0 - 6   0 - 6   10  7 6 5     7 0 - 8   0 - 9   0 - 3 4 5 5     0 - 4 4 0 6 5 7 10  3 4 5   
+    0 - 5 5 0 -     5 - 7 - 7 6     3       5       10  7 3 5 1   7 0 -   1 0 2   1 0 - 3 - 5 - 0 1 2 3 4 5 6 7 8 9 1011120 0 - 
+    0 -     0 -     0 - 3 - 5 -     0 -     0 -     10  7 7 5       0 -     0 -     0 - 3 - 5 -     0 - 4   0 - 5   10  7 7 5   
+    0 - 5 5 0 -     5 - 7 - 7 6     3       5       10  7 3 5       0 -     0 -     0 - 3 - 5 -     0 - 4   0 - 5   10  7 7 11  

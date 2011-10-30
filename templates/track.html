@@ -1,0 +1,114 @@
+<div
+  class="track
+  {{ 'failed' if track.failed else 'successful' }}
+  {{ 'shared' if track.share else '' }}
+  {{ 'running' if track.running else '' }}
+  update
+  "
+  id="{{ track.uid }}"
+  source="/monitor/watch/{{ track.uid }}
+">
+    <div class="left">
+        {% if track.thumbnail %}
+        <div class="art">
+            <img src="/{{ track.thumbnail }}" />
+        </div>
+        {% end %}
+        <div class="title">{{ str( track.title or track.upload.detail ) }}</div>
+        {% if track.artist and track.album %}
+            <div class="subtitle">by {{ str( track.artist ) }}<br />from <em>{{ str( track.album ) }}</em></div>
+        {% elif track.artist %}
+            <div class="subtitle">by {{ str( track.artist ) }}</div>
+        {% end %}
+        <div class="smallinfo">
+            <strong>{{ track.style }}</strong>
+            | {{ seconds_to_time( track.length ) }}
+            | {{ convert_bytes( track.size ) }} 
+            {% if track.bitrate %} | {{ track.bitrate / 1000.0 }} kbps {% end %}
+            {% if track.channels %} | {{ 'stereo' if track.channels == 2 else 'mono' }} {% end %}
+            {% if track.samplerate %} | {{ track.samplerate / 1000.0 }}kHz {% end %}
+            {% if track.extension %} | {{ track.extension.upper()[1:] }} {% end %}
+        </div>
+        <div class="time">
+            Added {{ time_ago_in_words( track.time ) }} ({{ track.time }})
+        </div>
+        {% if track.failed %}
+        <div class="failed">
+            failed due to {{ "<br />".join( xhtml_escape( track.failure ).split("\n") ) }}
+        </div>
+        {% end %}
+    </div>
+    <div class="right">
+        <a class="  panel
+                    uploaded
+                    {{ 'enabled' if track.upload else 'disabled' }}
+        ">
+            <div class="top">
+                Uploaded
+            </div>
+            <div class="bottom">
+                {{ track.upload.ip }}
+            </div>
+        </a>
+        <a class="  panel
+                    started
+                    {{ 'enabled' if track.remix else 'disabled' }}
+                    {{ 'running' if track.running and track.upload and not track.remix else '' }}
+        ">
+            <div class="top">
+                Started
+            </div>
+            <div class="bottom">
+                {{ seconds_to_time( track.remix.start - track.upload.end ) if track.remix and track.remix.start and track.upload and track.upload.end else '' }}
+            </div>
+        </a>
+        <a class="  panel
+                    remixed
+                    {{ 'enabled' if track.remix and track.remix.end else 'disabled' }}
+                    {{ 'running' if track.running and track.remix and not track.remix.end else '' }}
+                    {{ 'failed' if track.remix and track.remix.success is False else 'successful' }} "
+            {% if track.remix and track.remix.success is False %}
+              title="{{ xhtml_escape( track.remix.detail ) }}"
+            {% end %}
+            target='_blank'
+        >
+            <div class="top">
+                Remixed
+            </div>
+            <div class="bottom"
+              title="{{ track.text if track.text else '' }}"
+              >
+                {% if track.remix and track.remix.end %}
+                    {{ seconds_to_time( track.remix.time() ) }}
+                {% elif track.progress %}
+                    {{ round( track.progress * 100, 2 ) }}%
+                {% end %}
+            </div>
+        </a>
+        <a class="  panel
+                    {{ 'enabled' if track.share and track.share.end else 'disabled' }}
+                    {{ 'running' if track.running and track.share else '' }}
+                    {{ 'failed' if track.share and track.share.success is False else 'shared' }} "
+            {% if track.share and track.share.success %}
+                href="{{ track.share.detail }}"
+            {% elif track.share and track.share.success is False %}
+                title="{{ track.share.detail }}"
+            {% end %}
+        >
+            <div class="top">
+                Shared
+            </div>
+            <div class="bottom">
+                {{ seconds_to_time( track.share.time() ) if track.share and not track.running else '' }}
+            </div>
+        </a>
+        <a class="  panel 
+                    downloaded
+                    {{ 'enabled' if track.download else 'disabled' }}
+        ">
+            <div class="top">
+                Downloaded
+            </div>
+        </a>
+    </div>
+</div>

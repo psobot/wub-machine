@@ -1,0 +1,54 @@
+<div id="overview" class="vert update">
+  Current time: {{ ct }}<br />
+  {{ inqueue }} song{{ '' if inqueue == 1 else 's' }} in queue.<br />
+  {{ processing }} song{{ '' if processing == 1 else 's' }} currently processing.<br />
+  <br />
+  Hourly limit: {{ hourly }} song{{ '' if hourly == 1 else 's' }}. {% if hourlyexceeded %}<strong>(Exceeded)</strong>{% end %}<br />
+  Processor limit: {{ maximum }} concurrent song{{ '' if maximum == 1 else 's' }}. {% if maximumexceeded %}<strong>(Reached)</strong>{% end %}<br />
+  Error rate over {{ errorInterval }} hour{{ '' if errorInterval == 1 else 's' }}: {{ round( errorRate * 100, 2 ) }}%. {% if errorRateExceeded %}<strong>(Notice)</strong>{% end %}<br />
+  Frontend Status: <strong>{{ 'OPEN' if isOpen else 'CLOSED' }}</strong><br /><br />
+  <table class="stats">
+    <tr>
+      <th>Songs</th>
+      <th>All Time</th>
+      <th>Past 24h</th>
+      <th>Past hour</th>
+    </tr>
+    <tr>
+      <th>Uploaded</th>
+      <td>{{ ever['upload'] }}</td>
+      <td>{{ day['upload'] }}</td>
+      <td>{{ hour['upload'] }}</td>
+    </tr>
+    <tr>
+      <th>Finished</th>
+      <td>{{ ever['remixTrue'] }} </td>
+      <td>{{ day['remixTrue'] }} </td>
+      <td>{{ hour['remixTrue'] }} </td>
+    </tr>
+    <tr>
+      <th>Failed</th>
+      <td>{{ ever['remixFalse'] }} </td>
+      <td>{{ day['remixFalse'] }} </td>
+      <td>{{ hour['remixFalse'] }} </td>
+    </tr>
+    <tr>
+      <th>Sharing</th>
+      <td>{{ ever['shareTrue'] }} </td>
+      <td>{{ day['shareTrue'] }} </td>
+      <td>{{ hour['shareTrue'] }} </td>
+    </tr>
+    <tr>
+      <th>Failed Sharing</th>
+      <td>{{ ever['shareFalse'] }} </td>
+      <td>{{ day['shareFalse'] }}  </td>
+      <td>{{ hour['shareFalse'] }} </td>
+    </tr>
+    <tr>
+      <th>Downloaded</th>
+      <td>{{ ever['download'] }} </td>
+      <td>{{ day['download'] }} </td>
+      <td>{{ hour['download'] }} </td>
+    </tr>
+  </table>
+</div>

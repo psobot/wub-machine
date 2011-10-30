@@ -1,0 +1,140 @@
+body {
+  font-family: Consolas, Courier, monospace;
+  font-size: 12px; }
+
+#top {
+  width: 960px;
+  height: 300px;
+  margin: 0 auto;
+  padding-bottom: 10px; }
+  #top #overview {
+    text-align: center;
+    margin-top: 10px;
+    width: 350px; }
+    #top #overview table {
+      width: 100%;
+      text-align: left; }
+  #top #songs {
+    height: 300px;
+    margin: 0;
+    float: right;
+    width: 610px; }
+
+#fail {
+  width: 960px;
+  margin: 10px auto; }
+  #fail a {
+    color: #222222;
+    text-decoration: none; }
+  #fail table {
+    width: 100%;
+    text-align: left;
+    vertical-align: top; }
+    #fail table th:first-child {
+      min-width: 100px; }
+
+.vert {
+  width: 30%;
+  margin: 0;
+  float: left; }
+
+.title {
+  font-weight: bold;
+  text-align: center; }
+
+.track {
+  width: 960px;
+  min-height: 100px;
+  border: 1px solid #dddddd;
+  margin: 5px auto;
+  position: relative;
+  font-family: Helvetica, Arial, sans-serif; }
+  .track .left {
+    margin: 10px 0 10px 10px; }
+    .track .left .smallinfo {
+      color: #999999; }
+    .track .left .failed {
+      margin-top: 18px;
+      color: red; }
+  .track .right {
+    width: 400px;
+    height: 80px;
+    position: absolute;
+    top: 10px;
+    right: 10px; }
+  .track .art {
+    float: left;
+    height: 80px;
+    width: 80px;
+    margin-right: 10px; }
+    .track .art img {
+      height: 80px;
+      width: 80px; }
+  .track .title {
+    text-align: left; }
+  .track .panel {
+    width: 80px;
+    height: 80px;
+    background-position: 10px 20px;
+    float: left;
+    text-decoration: none;
+    color: #cccccc; }
+    .track .panel .top {
+      text-align: center;
+      padding-top: 5px;
+      color: white; }
+    .track .panel .bottom {
+      text-align: center;
+      padding-top: 40px; }
+    .track .panel.uploaded.enabled {
+      background: url(/static/img/monitor/uploaded-enabled.png) center center no-repeat; }
+    .track .panel.uploaded.enabled.running {
+      background: url(/static/img/ajax-small.gif) center center no-repeat; }
+    .track .panel.uploaded.disabled {
+      background: url(/static/img/monitor/uploaded-disabled.png) center center no-repeat; }
+    .track .panel.uploaded.disabled.running {
+      background: url(/static/img/ajax-small.gif) center center no-repeat; }
+    .track .panel.started.enabled {
+      background: url(/static/img/monitor/started-enabled.png) center center no-repeat; }
+    .track .panel.started.enabled.running {
+      background: url(/static/img/ajax-small.gif) center center no-repeat; }
+    .track .panel.started.disabled {
+      background: url(/static/img/monitor/started-disabled.png) center center no-repeat; }
+    .track .panel.started.disabled.running {
+      background: url(/static/img/ajax-small.gif) center center no-repeat; }
+    .track .panel.successful.enabled {
+      background: url(/static/img/monitor/successful-enabled.png) center center no-repeat; }
+    .track .panel.successful.enabled.running {
+      background: url(/static/img/ajax-small.gif) center center no-repeat; }
+    .track .panel.successful.disabled {
+      background: url(/static/img/monitor/successful-disabled.png) center center no-repeat; }
+    .track .panel.successful.disabled.running {
+      background: url(/static/img/ajax-small.gif) center center no-repeat; }
+    .track .panel.failed.enabled {
+      background: url(/static/img/monitor/failed-enabled.png) center center no-repeat; }
+    .track .panel.failed.enabled.running {
+      background: url(/static/img/ajax-small.gif) center center no-repeat; }
+    .track .panel.failed.disabled {
+      background: url(/static/img/monitor/failed-disabled.png) center center no-repeat; }
+    .track .panel.failed.disabled.running {
+      background: url(/static/img/ajax-small.gif) center center no-repeat; }
+    .track .panel.shared.enabled {
+      background: url(/static/img/monitor/shared-enabled.png) center center no-repeat; }
+    .track .panel.shared.enabled.running {
+      background: url(/static/img/ajax-small.gif) center center no-repeat; }
+    .track .panel.shared.disabled {
+      background: url(/static/img/monitor/shared-disabled.png) center center no-repeat; }
+    .track .panel.shared.disabled.running {
+      background: url(/static/img/ajax-small.gif) center center no-repeat; }
+    .track .panel.downloaded.enabled {
+      background: url(/static/img/monitor/downloaded-enabled.png) center center no-repeat; }
+    .track .panel.downloaded.enabled.running {
+      background: url(/static/img/ajax-small.gif) center center no-repeat; }
+    .track .panel.downloaded.disabled {
+      background: url(/static/img/monitor/downloaded-disabled.png) center center no-repeat; }
+    .track .panel.downloaded.disabled.running {
+      background: url(/static/img/ajax-small.gif) center center no-repeat; }
+    .track .panel.enabled {
+      color: #444444; }
+    .track .panel.disabled {
+      color: #cccccc; }

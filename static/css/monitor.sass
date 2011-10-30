@@ -1,0 +1,111 @@
+$width: 960px
+
+body
+  font-family: Consolas, Courier, monospace
+  font-size: 12px
+
+#top
+  width: $width
+  height: 300px
+  margin: 0 auto
+  padding-bottom: 10px
+  #overview
+    text-align: center
+    margin-top: 10px
+    width: 350px
+    table
+      width: 100%
+      text-align: left
+  #songs
+    height: 300px
+    margin: 0
+    float: right
+    width: $width - 350px
+
+
+#fail
+  width: $width
+  margin: 10px auto
+  a
+    color: #222
+    text-decoration: none
+  table
+    width: 100%
+    text-align: left
+    vertical-align: top
+    th:first-child
+      min-width: 100px
+
+.vert
+  width: 30%
+  margin: 0
+  float: left
+
+.title
+  font-weight: bold
+  text-align: center
+
+.track
+  width: $width
+  min-height: 100px
+  border: 1px solid #ddd
+  margin: 5px auto
+  position: relative
+  font-family: Helvetica, Arial, sans-serif
+
+  .left
+    margin: 10px 0 10px 10px
+    .smallinfo
+      color: #999
+    .failed
+      margin-top: 18px
+      color: #f00
+
+  .right 
+    width: 400px
+    height: 80px
+    position: absolute
+    top: 10px
+    right: 10px
+
+  .art
+    float: left
+    height: 80px
+    width: 80px
+    margin-right: 10px
+    img
+      height: 80px
+      width: 80px
+
+  .title
+    text-align: left
+
+  .panel
+    width: 80px
+    height: 80px
+    background-position: 10px 20px
+    float: left
+    text-decoration: none
+    color: #ccc
+
+    .top
+      text-align: center
+      padding-top: 5px
+      color: #fff
+
+    .bottom
+      text-align: center
+      padding-top: 40px
+
+    @each $action in uploaded, started, successful, failed, shared, downloaded
+      @each $state in enabled, disabled
+        &.#{$action}
+          &.#{$state}
+            background: url(/static/img/monitor/#{$action}-#{$state}.png) center center no-repeat
+          &.#{$state}.running
+            background: url(/static/img/ajax-small.gif) center center no-repeat
+    
+    &.enabled
+      color: #444
+    &.disabled
+      color: #ccc

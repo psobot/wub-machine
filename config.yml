@@ -1,0 +1,49 @@
+# Frontend settings
+app_name: "your-app-name-here"
+
+# Remix Queue settings
+maximum_concurrent_remixes: 2
+maximum_waiting_remixes: 2
+hourly_remix_limit: 20
+
+# Timeouts (0: no timeout)
+cleanup_timeout: 3600  # in seconds
+remix_timeout: 1800    # in seconds, A remix could take up to 20 minutes
+wait_timeout: 1800     # in seconds, how long someone can wait for a remix.
+watch_timeout: 25      # After upload, the browser has x seconds to open a progress socket.
+
+thumbnail_size: 128
+
+# Monitor settings
+monitor_limit: 20
+monitor_time_limit: 172800 # in seconds, time in the past to allow searching/graphing
+
+# Server settings
+nginx: True
+database_connect_string: 'mysql+mysqldb://user:password@server/schema'
+
+# Backend log-to-file and debug
+log_file: 'log.txt'
+log_name: "web"
+log_format: '%(asctime)s (%(levelname)s) %(module)s:%(lineno)d: %(message)s'
+echo_database_queries: False
+
+# Allowed mimetypes and file extensions
+allowed_file_extensions: ['.mp3', '.m4a', '.mp4', '.wav']
+
+# Socket.IO variables, needed in JS and backend
+socket_io_port: 8001
+socket_extra_sep: '/'
+monitor_resource: 'watch'
+progress_resource: 'progress'
+
+# Soundcloud settings and strings
+soundcloud_consumer: "your-consumer-key-here"
+soundcloud_secret: "your-secret-key-here"
+soundcloud_redirect: 'your-redirect-url-here'
+soundcloud_app_id: 0  # YOUR APP ID HERE
+soundcloud_timeout: 300.0
+
+soundcloud_description: ""  # Your description here
+soundcloud_tag_list: ["auto-remix"] # Add your tags here
+soundcloud_sharing_note: 'Check out my new remix!'

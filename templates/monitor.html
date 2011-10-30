@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Logs & Stats for the Wub Machine</title>
+		    <link rel="shortcut icon" type="image/png" href="/static/img/icon.png" />
+		    <link href='/static/css/monitor.css' rel='stylesheet' type='text/css' />
+		    <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.min.js"></script>
+        <script type="text/javascript">{{ config }}</script>
+        <script type="text/javascript" src="/static/js/highcharts.js"> </script>
+        <script src="http://cdn.socket.io/stable/socket.io.js"></script>
+        <script type="text/javascript" src="/static/js/monitor.js"></script>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> 
+    </head>
+    <body>
+        <div id="top">
+            {{ overview }}
+            <div id="songs"></div>
+        </div>
+        <div id="focus"></div>
+        <div id="latest" class="scroll" source="/monitor/latest">{{ latest }}</div>
+    </body>
+</html>

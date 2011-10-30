@@ -1,0 +1,31 @@
+<table class="stats">
+    <tr>
+        <th>Started</th>
+        <th>Song ID</th>
+        <th>Progress</th>
+        <th>Song</th>
+        <th>Artist</th>
+        <th>IP</th>
+    </tr>
+    {% for remix in c %}
+        {% if not remix.last %}
+        <tr>
+                <td>{{ fd( remix.started ) }}</td>
+                <td>{{ remix.uid }}</td>
+                <td colspan=3 style='text-align: center;'>Waiting to start...</td>
+                <td>{{ remix.requester }}</td>
+        </tr>
+        {% else %}
+        <tr>
+                <td>{{ fd( remix.started ) }}</td>
+                <td>{{ remix.uid }}</td>
+                <td>{{ round( remix.last['progress'] * 100, 2 ) }}</td>
+                <td>{{ remix.last['tag']['title'] if 'title' in remix.last['tag'] else "<empty>" }}</td>
+                <td>{{ remix.last['tag']['artist'] if 'artist' in remix.last['tag'] else "<empty>" }}</td>
+        </tr>
+        {% end %}
+    {% end %}
+    {% if not len( c ) %}
+        <tr><td colspan=7 style='text-align: center;'>No songs currently being processed.</td></tr>
+    {% end %}
+</table>
